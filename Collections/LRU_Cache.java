@@ -93,5 +93,7 @@ private HashMap<Integer, Node> map;
 
         System.out.println("Get key 1: " + cache.get(1)); 
         cache.display();
+        cache.put(5, 50);
+        cache.display();
     }
 }
