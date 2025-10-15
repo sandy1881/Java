@@ -1,0 +1,83 @@
+1. Scrum Overview
+Scrum is a lightweight Agile framework for managing complex projects. It emphasizes:
+Iterative development in short cycles called Sprints
+Transparency through daily standups and visible artifacts
+Collaboration between cross-functional teams and stakeholders
+
+Key Roles in Scrum:
+Role	Responsibilities
+Product Owner (PO)	Defines vision, prioritizes backlog, represents stakeholders
+
+Scrum Master	Facilitates Scrum events, removes impediments, ensures Scrum is followed
+
+Development Team	Cross-functional team delivering the product increment
+
+
+2. Sprints
+Definition:
+A Sprint is a time-boxed iteration (usually 1–4 weeks) where the team delivers a potentially shippable product increment.
+Key Points:
+Duration is fixed for all sprints in a project
+Sprint goals are clearly defined during Sprint Planning
+At the end of each sprint, the team holds a Sprint Review to demonstrate completed work
+
+Sprint Lifecycle:
+Sprint Planning – decide what work to do
+Daily Scrum / Standups – 15-minute progress sync
+Development Work – coding, testing, documentation
+Sprint Review – demo work to stakeholders
+Sprint Retrospective – reflect and improve process
+
+3. Standups / Daily Scrum
+Definition:
+A standup is a short, daily meeting (usually 15 minutes) to synchronize the team.
+
+Questions Typically Answered:
+What did I do yesterday?
+What will I do today?
+Are there any impediments or blockers?
+
+Benefits:
+Keeps team aligned
+Highlights risks early
+Encourages accountability
+
+4. Backlog Management
+Definition:
+The Product Backlog is a prioritized list of features, tasks, and bug fixes that the team may work on in future sprints.
+
+Key Points:
+Managed by the Product Owner
+Items are called User Stories
+Each item has a priority, description, and sometimes story points (effort estimate)
+
+Sprint Backlog:
+Subset of the product backlog selected for the current sprint
+Owned by the Development Team
+Can evolve during the sprint but generally fixed once sprint starts
+Prioritization Techniques:
+MoSCoW (Must, Should, Could, Won’t)
+Value vs Effort Matrix
+
+5. Scrum Artifacts and Visuals
+Artifact	Purpose
+Product Backlog	Full list of features/tasks
+Sprint Backlog	Selected tasks for current sprint
+Increment	Completed work meeting the Definition of Done
+Burn-down Chart	Tracks remaining work in a sprint
+
+6. Example Workflow
+PO creates backlog:
+"Search Movie" (High)
+"Book Seats" (High)
+"Payment Integration" (Medium)
+
+Sprint Planning: Team picks "Search Movie" and "Book Seats"
+
+Daily Standups:
+Alice: Implemented search UI
+Bob: Working on search API
+Carol: Blocked by API issue
+End of Sprint Review: Demo to stakeholders
+
+Retrospective: Discuss what went well, what didn’t, improvements

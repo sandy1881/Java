@@ -1,0 +1,88 @@
+1. Communicating in an Agile Team
+
+Communication in Agile is frequent, transparent, and structured. Depending on the situation, you’d use different channels:
+
+Daily Stand-ups
+Short 15-minute syncs to update the team on:
+What you did yesterday
+What you will do today
+Any blockers or issues
+
+Example:
+“Yesterday I found a dependency issue with the API, which might delay the login module. Today I’ll coordinate with the API team to resolve it.”
+
+Sprint Review
+Present completed work to stakeholders and get feedback
+
+Example:
+“The search feature is ready, but we received feedback to add auto-suggestions. We can add this in the next sprint.”
+
+Sprint Retrospective
+Discuss what went well, what didn’t, and improvements for the next sprint
+
+Example:
+“We underestimated the effort for payment integration. Next sprint, we’ll break down tasks into smaller items.”
+
+Ad-hoc Communication
+For urgent issues, use tools like Slack, Teams, Jira comments, or direct conversations
+
+Key Principles
+Be transparent: Don’t hide blockers or delays
+Be specific: Communicate impact and suggestions
+Be timely: Raise issues as soon as they are noticed
+
+2. Adjusting the Backlog
+
+The backlog is dynamic and reflects priorities and feedback. Adjustments happen as follows:
+
+Product Backlog Refinement (Grooming)
+The Product Owner updates the backlog based on:
+Feedback from stakeholders or sprint review
+New requirements or changing priorities
+Issues discovered in current sprint
+
+Example
+New requirement: “Add dark mode to the app”
+PO adds a new user story to the backlog with priority and estimation
+Existing backlog items may be re-prioritized
+
+3. Adjusting Sprint Planning
+Sprint planning is time-boxed and happens at the start of each sprint. Adjustments occur when:
+During Sprint Planning
+Include high-priority items from updated backlog
+Adjust sprint goals based on team capacity
+Split large tasks into smaller stories if needed
+During the Sprint (if needed)
+Scope changes are handled carefully
+Minor adjustments possible via Sprint Backlog updates, ideally approved by the PO and Scrum Master
+Major changes may be deferred to the next sprint
+
+Example
+Original sprint goal: Complete login and search features
+Mid-sprint, new API requirement discovered
+Action: Add a task to sprint backlog, adjust priorities, communicate impact in daily stand-up
+
+4. Tools for Communication and Backlog Adjustment
+Tool	Usage
+Jira / Azure DevOps / Rally	Update backlog, create tasks, track progress
+Slack / Teams	Quick updates or urgent blockers
+Confluence / Docs	Document changes or decisions for reference
+Burn-down Chart	Track remaining work and sprint progress
+
+5. Best Practices
+Raise blockers immediately in daily stand-ups
+Communicate impact and solution clearly
+Update backlog collaboratively with Product Owner
+Adjust sprint backlog only after discussion with Scrum Master and PO
+Document decisions so the team stays aligned
+
+Example Scenario: Putting It All Together
+Situation: During Sprint 2, QA finds that the payment module fails with certain credit cards.
+Communication: Raise issue in daily stand-up, add note in Jira
+Backlog Adjustment: Product Owner adds “Fix payment API compatibility” as a high-priority story
+
+Sprint Adjustment:
+Team reviews sprint backlog
+Decides to pull a lower-priority story to next sprint
+Updates sprint burn-down chart
+This approach ensures transparency, team alignment, and flexibility — the essence of Agile.

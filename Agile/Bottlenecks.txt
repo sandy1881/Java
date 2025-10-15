@@ -1,0 +1,91 @@
+1. Identify Bottlenecks
+
+A bottleneck is a stage in the workflow where work gets delayed or blocked, slowing the entire process.
+Steps to Identify Bottlenecks
+Visualize the Workflow
+Use Kanban boards or task boards to see the flow of tasks
+Columns typically represent: To Do → In Progress → Review → Done
+Bottlenecks are visible where tasks pile up
+Measure Cycle Time / Lead Time
+Cycle time = Time taken to complete a task from start to finish
+Lead time = Time from request to delivery
+Long cycle or lead times in a stage indicate a bottleneck
+Analyze Work in Progress (WIP)
+Too many tasks in a single stage can indicate resource overload
+Limit WIP to focus team effort and highlight slow points
+Collect Feedback from Team
+
+During retrospectives, ask team members:
+“Which part of the process slows us down?”
+Developers, testers, or reviewers may reveal hidden blockers
+
+Identify Dependency Issues
+Tasks waiting for external input, approvals, or other teams often create delays
+Map dependencies and track tasks that are blocked frequently
+
+Use Metrics and Tools
+Burn-down / Burn-up charts – show progress vs. plan
+Cumulative flow diagrams – highlight areas where work accumulates
+Jira, Azure DevOps, or Trello analytics – identify slow stages
+
+2. Improve Predictability
+Predictability means the team can reliably estimate and deliver work on time. Steps to improve it:
+
+Refine the Backlog
+Break large stories into smaller, well-defined tasks
+Clarify acceptance criteria
+Prioritize backlog items realistically
+Use Historical Data
+Track past velocity (story points completed per sprint)
+Use average velocity to plan future sprints
+Set WIP Limits
+Avoid overloading the team
+Keeps workflow smooth and prevents piling up of tasks
+Continuous Improvement
+Identify bottlenecks in retrospectives
+Adjust workflow or roles to remove impediments
+
+Example: Add more reviewers if code review is slowing sprints
+Automate and Streamline
+Automate repetitive tasks (CI/CD, testing)
+Reduces delays and improves consistency
+Daily Stand-ups
+Raise blockers early
+Keep tasks visible and track progress continuously
+Use Metrics to Track Progress
+Velocity: Predict how much work can be completed per sprint
+Cumulative Flow Diagram: Spot bottlenecks in real-time
+Lead Time / Cycle Time: Measure improvement over time
+
+3. Example Scenario
+
+Problem: QA testing is slowing down sprints.
+
+Steps Taken:
+Visualize: Kanban board shows tasks piling up in “Testing” column.
+Measure: Cycle time for testing is 5 days vs. 2 days for development.
+Root Cause: Limited QA resources and manual testing.
+
+Solution:
+Add automated test scripts
+Reassign developers to help QA
+Limit WIP to prevent backlog accumulation
+Outcome: Testing cycle time reduces, sprint predictability improves.
+
+4. Summary Table
+Step	Purpose	Tool/Technique
+Visualize Workflow	Identify where tasks pile up	Kanban board, Cumulative Flow Diagram
+Measure Cycle/Lead Time	Quantify bottlenecks	Jira, Azure DevOps
+Collect Team Feedback	Reveal hidden blockers	Retrospectives
+Limit Work in Progress	Smooth workflow	WIP limits in Kanban
+Automate Repetitive Tasks	Reduce delays	CI/CD, Automated Tests
+Track Metrics & Velocity	Improve sprint predictability	Burn-down charts, Velocity tracking
+Continuous Improvement	Make process faster & predictable	Sprint Retrospective, Process adjustments
+
+Key Takeaways:
+
+Bottlenecks are often visible, measurable, and solvable.
+
+Predictability comes from historical data, WIP management, clear backlog, and continuous improvement.
+
+Agile metrics and visualization tools are critical for identifying issues early.

@@ -1,0 +1,85 @@
+1. What is Agile Methodology?
+Agile is a software development methodology focused on iterative development, collaboration, and flexibility.
+Instead of planning the entire project upfront (like in Waterfall), Agile delivers software in small, incremental releases, allowing teams to adapt to changing requirements quickly.
+
+Key Points:
+Iterative and incremental approach
+Emphasis on collaboration (team + customer)
+Quick feedback loops and continuous improvement
+Prioritizes working software over comprehensive documentation
+
+2. Agile Manifesto
+Agile is guided by the Agile Manifesto (2001), which values:
+Individuals and interactions over processes and tools
+Working software over comprehensive documentation
+Customer collaboration over contract negotiation
+Responding to change over following a plan
+
+12 Principles of Agile include:
+Deliver working software frequently
+Welcome changing requirements
+Maintain a sustainable pace
+Continuous attention to technical excellence
+Self-organizing teams
+Regular reflection and improvement
+
+3. Agile Frameworks / Types
+Agile is a methodology, and several frameworks implement it:
+Framework	Description
+Scrum	Most popular; works in sprints (2-4 weeks); roles: Product Owner, Scrum Master, Development Team
+Kanban	Focuses on visualizing work, continuous delivery, and limiting work in progress
+Extreme Programming (XP)	Emphasizes technical practices like TDD, pair programming, and frequent releases
+Lean	Focuses on eliminating waste and delivering value faster
+
+4. Agile Roles
+Role	Responsibilities
+Product Owner	Defines product vision, manages backlog, prioritizes features
+Scrum Master	Facilitates Scrum process, removes obstacles, ensures team productivity
+Development Team	Cross-functional team building the product
+Stakeholders	Customers or users providing feedback and requirements
+
+5. Agile Artifacts
+Artifact	Purpose
+Product Backlog	List of all features and requirements
+Sprint Backlog	Tasks selected for the current sprint
+Increment	Working product delivered at the end of a sprint
+Burn-down Chart	Shows remaining work vs. time
+6. Agile Ceremonies / Events
+Event	Purpose
+Sprint Planning	Define what to achieve in sprint
+Daily Stand-up / Daily Scrum	Quick 15-min team sync
+Sprint Review	Demonstrate completed work to stakeholders
+Sprint Retrospective	Reflect on improvements for next sprint
+
+7. Agile Tools
+Common tools for Agile project management:
+Jira – Popular for Scrum/Kanban boards
+Trello – Visual task management
+Asana, Monday.com, ClickUp – Task tracking
+VersionOne, Rally – Enterprise Agile management
+
+8. Advantages of Agile
+Advantage	Description
+Faster delivery	Iterative releases speed up delivery
+Flexibility	Easy to accommodate changing requirements
+Customer satisfaction	Continuous collaboration improves quality
+Risk reduction	Early detection of issues reduces risk
+Transparency	Frequent updates and reviews
+
+9. Agile vs Waterfall
+Feature	Agile	Waterfall
+Development	Iterative & incremental	Sequential & linear
+Requirement changes	Welcomed	Difficult to accommodate
+Feedback	Continuous	At end of project
+Delivery	Early & frequent	Only at end
+Documentation	Minimal but sufficient	Extensive
+
+10. Real-life Example in Agile
+Imagine a movie ticket booking app:
+Sprint 1: User can search movies
+Sprint 2: Add seat selection & booking
+Sprint 3: Payment integration
+
+Each sprint delivers working software and gathers user feedback for next improvements.
+
+Agile is all about collaboration, adaptability, and delivering value quickly rather than strictly following a plan.

@@ -1,0 +1,75 @@
+1. Working in Agile Teams
+
+Agile teams are designed to be cross-functional, collaborative, and self-organizing.
+
+Key Characteristics of Agile Teams:
+Feature	Description
+Cross-functional	Team includes all skills needed: developers, testers, designers, etc.
+Self-organizing	Team decides how to accomplish tasks without heavy management oversight
+Collaborative	Continuous communication between team members and with Product Owner/Stakeholders
+Small and Focused	Typically 5–9 members for efficiency
+Adaptable	Can quickly respond to changing requirements
+
+Roles in an Agile Team:
+Product Owner – prioritizes work and represents stakeholders
+Scrum Master / Agile Coach – ensures team follows Agile practices and removes blockers
+Development Team Members – execute tasks, share responsibilities, ensure quality
+
+Team Practices
+Daily standups for progress sync
+Sprint planning, review, and retrospectives
+Pair programming or peer review for better quality
+Continuous collaboration with stakeholders for feedback
+
+2. Iterative Development
+Definition:
+Iterative development is a process of building software in repeated cycles (iterations) instead of trying to deliver the complete product in one go. Each iteration delivers small, working increments of the software.
+
+Key Points:
+Each iteration is a short time-box (1–4 weeks, called a sprint in Scrum)
+At the end of each iteration, the team delivers a working product increment
+Feedback from stakeholders is incorporated in the next iteration
+Allows for continuous improvement and adaptation
+
+3. Iterative vs. Traditional Development
+Feature	Iterative (Agile)	                                Traditional (Waterfall)
+Delivery	Incremental, working software every iteration	One final delivery at the end
+Feedback	Continuous	                                    Only after project completion
+Change Management	Easy to adapt	                        Difficult and costly
+Risk	Low, because issues are detected early	            High, issues found late
+Documentation	Minimal but sufficient	                    Extensive upfront
+
+4. Iterative Development Cycle
+Plan – Define goals and backlog items for the iteration
+Design & Build – Develop features planned for the iteration
+Test – Test incrementally for functionality and quality
+Review & Feedback – Demo to stakeholders for feedback
+Reflect & Improve – Retrospective to improve next iteration
+Each cycle feeds into the next, continuously refining the product.
+
+5. Advantages of Agile Teams with Iterative Development
+Advantage	Explanation
+Faster Delivery	Working software is delivered early and often
+Flexibility	Easy to adapt to changing requirements or priorities
+Early Risk Detection	Issues are found and fixed early in iterations
+Higher Quality	Continuous testing and feedback improve quality
+Better Collaboration	Frequent communication aligns team and stakeholders
+Customer Satisfaction	Stakeholders see progress regularly and influence the product
+
+6. Real-life Example
+Imagine an e-commerce website project:
+Iteration 1 – Implement product search functionality
+Iteration 2 – Add shopping cart feature
+Iteration 3 – Integrate payment gateway
+Iteration 4 – Add order tracking and notifications
+
+After each iteration:
+
+The team demonstrates the features to stakeholders
+Feedback is collected and prioritized for the next iteration
+The team improves both product and process in the retrospective
+
+Summary
+Agile Teams are collaborative, cross-functional, and self-organizing
+Iterative Development breaks work into small cycles, delivering working software each time
+Combined, they allow faster, adaptive, high-quality software delivery with continuous stakeholder feedback
