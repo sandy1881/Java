@@ -1,0 +1,141 @@
+What “real-time / low-latency” means
+
+Low latency: minimize the time between request and response (optimize P50/P90/P99/P999).
+Real-time (soft vs hard): most business apps are soft real-time — the goal is predictability and tight latency tails, not hard real-time guarantees (OS/hardware RT required).
+Success metric: latency percentile targets (e.g., P99 < 5 ms) rather than raw throughput alone.
+
+High-level architecture patterns
+Push vs Pull: push (server → client) via WebSockets/Server-Sent Events for realtime updates.
+Reactive / non-blocking pipelines: minimize thread context switches and queueing.
+Parallel stages & pipelining: split processing into small stages connected by queues (disruptor/queues).
+Bounded queues / backpressure: prevent overload and tail latency explosions.
+Avoid synchronous/blocking calls on hot request path (DB, remote calls).
+Spring Boot choices — use the right stack
+Use Spring WebFlux (Reactive) not Spring MVC for high concurrency with fewer threads.
+WebFlux runs on Reactor + Netty by default (non-blocking).
+Avoid blocking calls inside controllers — if you must call a blocking API, isolate it on a dedicated bounded thread pool (and mark it clearly).
+Configure Reactor/Netty for TCP options, event-loop threads, and memory behavior.
+
+Minimal example: reactive controller + Reactor Netty tuning
+// Reactive controller
+@RestController
+public class PriceController {
+    @GetMapping("/price/{id}")
+    public Mono<Price> getPrice(@PathVariable String id) {
+        return priceService.getPriceReactive(id); // non-blocking
+    }
+}
+
+// Reactor Netty Server customization (Spring Boot application)
+@Bean
+public NettyReactiveWebServerFactory nettyFactory() {
+    NettyReactiveWebServerFactory factory = new NettyReactiveWebServerFactory();
+    factory.addServerCustomizers(httpServer ->
+        httpServer.tcpConfiguration(tcp -> tcp
+            .selectorOption(ChannelOption.SO_REUSEADDR, true)
+            .selectorOption(EpollChannelOption.EPOLL_MODE, EpollMode.ET)
+            .runOn(LoopResources.create("netty-loop", eventLoopCount, true))
+            .doOnConnection(conn -> {
+                conn.channel().config().setTcpNoDelay(true);
+                conn.channel().config().setKeepAlive(true);
+            })
+        )
+    );
+    return factory;
+}
+
+
+(Adjust eventLoopCount to number of cores; prefer epoll on Linux.)
+
+Concurrency & threading patterns
+Use non-blocking event loops for I/O (Netty).
+Use bounded worker pools for CPU work or for unavoidable blocking operations:
+Schedulers.boundedElastic() or a custom ExecutorService with limited threads and queue size.
+Prefer lock-free data structures and atomic updates where possible.
+Avoid global synchronized/locks on hot paths.
+Serialization & data handling
+Binary, compact formats (Protocol Buffers, SBE, FlatBuffers) instead of JSON for speed and lower GC.
+Reuse buffers (Netty ByteBuf pooling) and avoid excessive object allocations/boxing.
+Use off-heap or direct buffers for extremely tight requirements.
+Low-latency libraries & patterns to consider
+LMAX Disruptor — extremely low-latency inter-thread messaging for pipeline stages.
+Chronicle Queue / Chronicle Bytes — low-latency messaging and persistence.
+Aeron — reliable UDP/multicast transport for ultra-low latency.
+HdrHistogram — record latency histograms with high resolution.
+SBE (Simple Binary Encoding) for minimal serialization overhead.
+JVM & GC tuning (short practical guide)
+
+Goal: minimize GC pauses and reduce allocation pressure.
+GC choices:
+ZGC / Shenandoah (low-pause) — good for large heaps and low pause.
+G1 with tuned pause target is acceptable for many apps.
+Settings to consider:
+Set heap size (-Xms = -Xmx) to avoid resizing overhead.
+Use -XX:+UseStringDeduplication only if beneficial (test it).
+Prefer escape analysis (JIT) friendly code; reduce short-lived object creation.
+Monitor GC with JFR (Java Flight Recorder), -Xlog:gc* (or vendor equivalent), and measure percentiles.
+Important: GC tuning is highly application-specific — measure before/after.
+
+OS / Kernel / Network tuning
+Use Linux with epoll (Netty uses it).
+Kernel tweaks:
+tcp_tw_reuse, tcp_fin_timeout, tuning of buffer sizes.
+net.core.somaxconn, net.ipv4.tcp_max_syn_backlog.
+
+Socket options:
+TCP_NODELAY = true (disable Nagle) to reduce latency for small packets.
+SO_REUSEPORT can help scale across processes.
+Consider NUMA affinity and thread pinning for very strict latency bounds.
+Persistence & external systems
+Avoid blocking DB calls in the hot path; use:
+Asynchronous DB drivers (R2DBC) for reactive stacks.
+Caching (in-process, local caches, or low-latency distributed caches like Redis with pipelining).
+Offload heavy or slow tasks to background workers via message queues (Kafka, RabbitMQ). Use bounded in-memory buffers before enqueueing to avoid overload.
+Observability, metrics & testing
+Measure latency percentiles: record P50/P90/P99/P999 and track trends. Use HdrHistogram for high-resolution histograms.
+Tools:
+Micrometer + Prometheus (metrics), Grafana dashboards.
+Distributed tracing: OpenTelemetry / Jaeger to follow request path and spot bottlenecks.
+Profilers: async-profiler, Java Flight Recorder (JFR), async stack sampling.
+
+Load and chaos testing:
+Use JMH for microbenchmarks.
+Use Gatling / k6 / JMeter for end-to-end load and latency tail testing.
+Test under GC pressure and full system load; simulate slow dependencies.
+
+Example: Avoid blocking in a reactive service
+Bad (blocking):
+
+@GetMapping("/user/{id}")
+public Mono<User> getUser(@PathVariable String id) {
+    // BLOCKING DB call on reactive thread — BAD
+    return Mono.just(userRepository.findById(id));
+}
+
+
+Good (isolate blocking or use reactive driver):
+
+@GetMapping("/user/{id}")
+public Mono<User> getUser(@PathVariable String id) {
+    return Mono.fromCallable(() -> userRepository.findById(id))
+               .subscribeOn(Schedulers.boundedElastic()); // isolates blocking work
+}
+
+
+Better: use fully reactive repository (R2DBC / reactive driver) so no blocking threads are used.
+Quick checklist to get you started
+Choose WebFlux + Reactor + Netty for non-blocking I/O.
+Avoid blocking calls on event loops; isolate them in bounded pools.
+Use compact binary serialization for hot paths (protobuf/SBE).
+Minimize allocations — reuse buffers, avoid boxing, use pooling.
+Tune JVM (heap fixed, GC selection) and measure GC tail effects.
+Enable Netty TCP_NODELAY, appropriate event-loop count, epoll on Linux.
+Add backpressure and bounded queues to prevent overload.
+Instrument latency histograms (HdrHistogram), p99/p999 metrics, and distributed traces.
+Load test under realistic patterns, including burst traffic and dependency failures.
+Continuously profile (JFR, async-profiler) and iterate.
+When to consider going beyond the JVM
+
+If you need hard real-time or extreme microsecond latency:
+Consider kernel bypass (DPDK), specialized languages/platforms, or native code (C/C++), or GraalVM native images (beware of startup/time tradeoffs).
+Use specialized transports (Aeron), busy-spinning threads, CPU pinning, and real-time OS features.

@@ -1,0 +1,162 @@
+1. Event-Driven Architecture (EDA)
+Event-Driven Architecture (EDA) is a design style where events (changes or actions) are the main way components communicate.
+Each service emits events when something happens and reacts to events from others.
+
+🔹 Core Concepts
+Term	Meaning
+Event -	A record of something that happened — e.g. “OrderCreated”, “PaymentSuccess”.
+Event Producer -	Component that publishes an event.
+Event Consumer -	Component that subscribes and reacts to events.
+Event Broker -	Middleware that routes and stores events (e.g., Kafka, RabbitMQ).
+Event Stream	- Continuous flow of events in order over time.
+
+⚙️ Example (Spring Boot)
+Producer
+@Component
+public class OrderService {
+    private final ApplicationEventPublisher publisher;
+
+    public OrderService(ApplicationEventPublisher publisher) {
+        this.publisher = publisher;
+    }
+
+    public void createOrder(Order order) {
+        // business logic
+        publisher.publishEvent(new OrderCreatedEvent(order));
+    }
+}
+
+Consumer
+@Component
+public class NotificationListener {
+    @EventListener
+    public void handleOrderCreated(OrderCreatedEvent event) {
+        System.out.println("Send confirmation email for: " + event.getOrder().getId());
+    }
+}
+
+
+ This is in-process eventing. For distributed systems, we use Message Queues or Streams.
+
+📨 2. Message Queues (MQ)
+ Definition
+A Message Queue is a middleware that stores and forwards messages asynchronously between producer and consumer systems.
+ Key Benefits
+Decoupling – producers and consumers don’t need to run at the same time.
+Reliability – messages are persisted until processed.
+Load leveling – smooth out traffic spikes.
+Retry and acknowledgment support.
+
+Common Technologies
+Tool	Characteristics
+RabbitMQ	Traditional message broker, supports routing, fanout, topics. Great for task queues.
+ActiveMQ / Artemis	JMS-based brokers, often used in enterprise systems.
+Amazon SQS / Azure Service Bus	Cloud-native queue services.
+Example: RabbitMQ with Spring Boot
+Configuration
+@Configuration
+public class RabbitConfig {
+    @Bean
+    public Queue orderQueue() {
+        return new Queue("order.queue", false);
+    }
+}
+
+Producer
+@Service
+public class OrderProducer {
+    private final RabbitTemplate rabbitTemplate;
+
+    public OrderProducer(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+    public void sendOrder(Order order) {
+        rabbitTemplate.convertAndSend("order.queue", order);
+    }
+}
+
+Consumer
+@Service
+public class OrderConsumer {
+    @RabbitListener(queues = "order.queue")
+    public void processOrder(Order order) {
+        System.out.println("Processing order: " + order.getId());
+    }
+}
+
+
+ Messages are persisted and retried automatically if consumer fails.
+
+3. Data Streams
+Definition
+A data stream is a continuous, ordered, and unbounded flow of events.
+Unlike a queue (message consumed once and deleted), streams retain data for a configured period — allowing replay, reprocessing, and analytics.
+
+ Common Tools
+Tool	Use case
+Apache Kafka	High-throughput distributed event streaming. Ideal for real-time pipelines, logs, analytics.
+Pulsar	Multi-tenant, geo-replicated streaming platform.
+Kinesis / Azure Event Hubs	Managed cloud streaming platforms.
+
+Kafka with Spring Boot (Spring Kafka)
+Producer
+@Service
+public class KafkaOrderProducer {
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public KafkaOrderProducer(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    public void publishOrder(String orderJson) {
+        kafkaTemplate.send("order-events", orderJson);
+    }
+}
+
+Consumer
+@Component
+@KafkaListener(topics = "order-events", groupId = "order-group")
+public class KafkaOrderConsumer {
+    @KafkaHandler
+    public void consume(String message) {
+        System.out.println("Received Order Event: " + message);
+    }
+}
+
+                     EDA                      vs Message Queue    vs          Data Stream
+Feature	     Event-Driven Architecture	         Message Queue	              Data Stream
+Scope	      System design pattern	             Middleware                 	Middleware
+Data retention	Depends on broker	Usually deleted after consumption	    Retained for hours/days
+Use case	Decoupled communication	        Task processing	                 Event analytics, replay
+Examples	Microservices,                  CQRS	RabbitMQ, ActiveMQ       	Kafka, Pulsar
+
+
+ Real-World Use Case Example
+E-commerce System (Event-Driven Architecture)
+OrderService publishes OrderCreatedEvent to Kafka.
+InventoryService consumes it → reduces stock.
+PaymentService consumes → triggers payment gateway.
+NotificationService listens → sends email/SMS.
+
+All communicate via Kafka topics asynchronously.
+✅ Benefits:
+No direct service-to-service coupling
+Each service scales independently
+Can reprocess historical events for analytics
+
+Key Spring Boot Tools & Libraries
+Library	Purpose
+Spring Events	In-process eventing
+Spring Cloud Stream	Abstracts over Kafka/RabbitMQ
+Spring Kafka / Spring AMQP	Direct integration for event-driven systems
+Reactor Kafka	Reactive streaming APIs
+Kafka Streams / Flink / Spark Streaming	Event processing & transformation pipelines
+
+Best Practices
+Use idempotent consumers (handle duplicate events safely).
+Include event versioning and schema registry (Avro, JSON Schema).
+Use DLQ (Dead Letter Queues) for failed messages.
+Correlate events with trace IDs for observability.
+For high throughput: batch processing + compression.
+Apply backpressure and rate limiting when consuming streams.
