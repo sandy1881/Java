@@ -1,0 +1,61 @@
+1. Understand the Module Thoroughly
+Review the module’s responsibilities and critical paths.
+Identify all input/output points, edge cases, and failure scenarios.
+Determine which parts are business logic versus external integration (DB, APIs, message brokers).
+
+2. Focus on Testable Units
+Isolate the core logic for testing. Avoid testing external systems directly.
+If the module is tightly coupled, consider refactoring only for testability, e.g., inject dependencies instead of hardcoding them.
+Keep changes minimal by using interfaces or dependency injection, not rewriting the module.
+
+3. Use Mocking for External Dependencies
+Mock databases, APIs, queues, or file systems so the module can be tested independently.
+For Spring Boot, use @MockBean or Mockito.
+Example:
+when(repository.findById(1)).thenReturn(Optional.of(mockEntity));
+Ensures tests don’t depend on real services and module behavior can be reliably tested.
+
+4. Cover Key Scenarios
+Ensure you write tests for:
+Positive paths – normal operations.
+Negative paths – invalid input, exceptions, error handling.
+Boundary conditions – min/max values, empty inputs, nulls.
+Edge cases – concurrency, duplicates, or rare combinations.
+
+5. Keep Tests Maintainable
+Use descriptive test names:
+testProcessPayment_ShouldReturnSuccess_WhenAmountIsValid()
+Avoid changing the production code unless necessary for dependency injection or testability.
+Keep helper methods inside test classes to reduce duplication.
+
+6. Use Assertions Wisely
+Assert both return values and side effects.
+Include exception handling assertions:
+assertThrows(IllegalArgumentException.class, () -> service.process(null));
+
+7. Minimize Code Changes
+Use wrappers or adapters for external systems instead of altering core logic.
+Apply test doubles (mock, fake, spy) instead of rewriting module internals.
+Only refactor small pieces if needed for dependency injection.
+
+8. Measure Coverage
+Use JaCoCo or IntelliJ coverage to ensure critical paths are tested.
+Focus on branches and conditional logic over trivial getters/setters.
+
+9. Automate and Integrate
+Include the tests in CI/CD pipelines.
+Run tests frequently to detect regressions early.
+For critical modules, consider mutation testing to ensure test effectiveness.
+
+10. Example Workflow
+Identify a method in a critical module (e.g., processPayment).
+List possible scenarios (success, failure, invalid input, exceptions).
+Inject mocked dependencies (repository, API client, etc.).
+Write separate test methods for each scenario using JUnit + Mockito.
+Run coverage tool, ensure all branches are exercised.
+Refactor only if absolutely needed for dependency injection.
+Interview-style Answer Summary:
+I start by identifying the critical paths and all edge cases. 
+I isolate the module logic and mock external dependencies to avoid touching real services. 
+I write unit tests covering positive, negative, and boundary scenarios, using descriptive names and proper assertions. 
+I only make minimal changes to the production code for dependency injection if necessary. This approach ensures reliability, high coverage, and maintainability without rewriting or impacting existing logic.

@@ -1,0 +1,155 @@
+What Is Unit Testing?
+
+Definition:
+Unit Testing means testing the smallest independent unit of code (usually a method or class) to verify it works correctly in isolation.
+
+Goal:
+Catch bugs early, ensure code reliability, and make refactoring safe.
+
+Tools Commonly Used:
+    JUnit 5 (Jupiter) → Standard testing framework
+    Mockito → For mocking dependencies
+    AssertJ / Hamcrest → For fluent assertions
+    Spring Boot Test → For Spring-based integration/unit tests
+
+JUnit Basics
+    Example: Simple Calculator Test
+
+Calculator.java
+
+public class Calculator {
+    public int add(int a, int b) {
+        return a + b;
+    }
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+}
+
+CalculatorTest.java
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class CalculatorTest {
+
+    @Test
+    void testAddition() {
+        Calculator calc = new Calculator();
+        assertEquals(5, calc.add(2, 3));
+    }
+
+    @Test
+    void testMultiplication() {
+        Calculator calc = new Calculator();
+        assertEquals(6, calc.multiply(2, 3));
+    }
+}
+
+
+ @Test tells JUnit this is a test method. assertEquals() verifies expected = actual.
+
+Testing Exceptions
+    @Test
+    void testDivideByZero() {
+          Calculator calc = new Calculator();
+             assertThrows(ArithmeticException.class, () -> calc.divide(10, 0));
+}
+
+Mocking with Mockito
+Used when your class depends on external components (e.g., database, API, repository).
+Example:
+@Service
+public class UserService {
+    @Autowired
+    private UserRepository userRepo;
+
+    public String getUserName(int id) {
+        User user = userRepo.findById(id).orElseThrow();
+        return user.getName();
+    }
+}
+
+
+Test:
+
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class UserServiceTest {
+
+    @Test
+    void testGetUserName() {
+        UserRepository mockRepo = Mockito.mock(UserRepository.class);
+        when(mockRepo.findById(1)).thenReturn(Optional.of(new User(1, "Sandesh")));
+        UserService service = new UserService();
+        service.userRepo = mockRepo;
+        assertEquals("Sandesh", service.getUserName(1));
+    }
+}
+
+Mockito mocks the repository → avoids hitting the real DB.
+
+Spring Boot Unit Testing
+When testing a Spring Boot component, use: @SpringBootTest or a lightweight: @WebMvcTest
+
+for controller testing.
+Example:
+@SpringBootTest
+class MyServiceTest {
+
+    @Autowired
+    private MyService myService;
+
+    @Test
+    void contextLoads() {
+        assertNotNull(myService);
+    }
+}
+
+Assertions & Matchers
+assertEquals(expected, actual)
+assertTrue(condition)
+assertNotNull(object)
+assertThrows(exception, lambda)
+assertAll(...) — multiple assertions together
+
+Test Lifecycle Annotations
+Annotation	Purpose
+@BeforeAll	Run once before all tests
+@BeforeEach	Run before each test
+@AfterEach	Run after each test
+@AfterAll	Run once after all tests
+@Disabled	Skip test temporarily
+
+Example Project Structure
+src/
+ ├─ main/java/com/example/demo/
+ │   ├─ Calculator.java
+ │   └─ UserService.java
+ └─ test/java/com/example/demo/
+     ├─ CalculatorTest.java
+     └─ UserServiceTest.java
+
+Running Tests
+In Maven:
+mvn test
+
+In Gradle:
+./gradlew test
+
+Benefits
+Faster feedback loop
+ Easier debugging
+ Improves code quality
+ Simplifies refactoring
+ Enables Continuous Integration (CI)
+
+In Interview (Short Summary Answer):
+
+I write unit tests using JUnit 5 and Mockito to validate individual methods in isolation.
+For dependencies like repositories or APIs, I mock them using Mockito.
+I use assertions to verify correctness, and organize tests with @BeforeEach, @AfterEach.
+For Spring components, I use @SpringBootTest or @WebMvcTest to test with the Spring context loaded.

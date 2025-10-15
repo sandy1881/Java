@@ -1,0 +1,124 @@
+1. Isolate the Unit Under Test
+A unit test should test only one class or method’s logic — not its dependencies.
+For example, if your service calls:
+A database (via repository)
+A REST API (via RestTemplate or WebClient)
+A message broker (Kafka, RabbitMQ)
+You should replace these with mocked versions.
+
+2. Use Mocking Frameworks (like Mockito)
+Mockito allows you to replace external dependencies with mocks and define their behavior.
+
+Example:
+class PaymentServiceTest {
+
+    @Mock
+    private PaymentGatewayClient paymentClient; // external service
+
+    @InjectMocks
+    private PaymentService paymentService;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    void testProcessPaymentSuccess() {
+        when(paymentClient.charge(anyDouble())).thenReturn("SUCCESS");
+
+        String result = paymentService.processPayment(500.0);
+
+        assertEquals("Payment Successful", result);
+        verify(paymentClient).charge(500.0);
+    }
+}
+
+
+Explanation:
+The real external API is never called.
+The response is simulated using when(...).thenReturn(...).
+You verify interactions using verify().
+
+3. Use Test Doubles When Needed
+Type	               Description                                          	Example
+Mock	  Fake object that simulates dependency behavior	    Mockito.mock(UserRepository.class)
+Stub    	Returns fixed responses for method calls	       Custom class implementing interface
+Fake	   Lightweight in-memory implementation	                      In-memory database
+
+Spy	Wraps a real object but tracks interactions	Mockito.spy(realObject)
+
+4. Mock External REST Calls
+If your code calls external APIs using RestTemplate or WebClient, you can mock them.
+
+Example using Mockito:
+@Mock
+private RestTemplate restTemplate;
+
+@Test
+void testGetData() {
+    String apiUrl = "https://api.example.com/data";
+    when(restTemplate.getForObject(apiUrl, String.class))
+            .thenReturn("mock-response");
+
+    String result = service.fetchData();
+
+    assertEquals("mock-response", result);
+}
+
+
+No real HTTP request is made — it’s simulated.
+
+5. For Spring Boot Apps
+Use @MockBean in tests that use the Spring context.
+
+@WebMvcTest(UserController.class)
+class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UserService userService;
+
+    @Test
+    void testGetUser() throws Exception {
+        when(userService.getUserName(1)).thenReturn("Sandesh");
+
+        mockMvc.perform(get("/api/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Sandesh"));
+    }
+}
+
+6. Use Test Configurations or Profiles
+Create a test profile (application-test.yml) that disables real connections or uses dummy endpoints.
+
+Example:
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+  kafka:
+    bootstrap-servers: dummy:9092
+
+7. Code Design for Testability
+To improve coverage and simplify mocking:
+Inject dependencies (don’t hardcode them).
+Avoid static calls or singletons.
+Keep business logic separate from integration logic.
+Follow SOLID principles, especially Dependency Inversion.
+
+8. Measure Coverage
+Use tools like:
+JaCoCo (Maven/Gradle plugin)
+SonarQube (for continuous inspection)
+
+Target:
+80%+ line coverage
+Focus on branch and condition coverage
+
+9. Summary (Interview Style Answer)
+I design unit tests to isolate business logic from external systems.
+I mock dependencies such as REST clients, databases, and message queues using Mockito or @MockBean so no real calls are made.
+I create test data and define mock responses for expected scenarios (success, failure, exceptions).
+This ensures high coverage while keeping tests fast, deterministic, and independent of external environments.
