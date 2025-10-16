@@ -1,0 +1,52 @@
+# 1. Initialize repo
+git init merge-conflict-demo
+cd merge-conflict-demo
+
+# 2. Create initial file and commit
+echo "Hello from main branch" > demo.txt
+git add demo.txt
+git commit -m "Initial commit on main branch"
+
+# 3. Create and switch to new branch
+git checkout -b feature
+
+# 4. Modify file in feature branch
+echo "Feature branch says hello!" > demo.txt
+git add demo.txt
+git commit -m "Updated demo.txt in feature branch"
+
+# 5. Switch back to main and modify same file
+git checkout main
+echo "Main branch has a different message!" > demo.txt
+git add demo.txt
+git commit -m "Updated demo.txt in main branch"
+
+# 6. Merge feature into main (conflict occurs)
+git merge feature
+
+# 7. Check conflict status
+git status
+
+# 8. View conflict
+cat demo.txt
+
+# --- Resolve Conflict Options ---
+
+# Option 1: Keep main branch changes
+git checkout --ours demo.txt
+git add demo.txt
+
+# Option 2: Keep feature branch changes
+# git checkout --theirs demo.txt
+# git add demo.txt
+
+# Option 3: Combine both (manual merge)
+# git checkout --merge demo.txt
+# nano demo.txt   # or use VS Code to adjust
+# git add demo.txt
+
+# 9. Commit resolved merge
+git commit -m "Resolved merge conflict between main and feature"
+
+# 10. View history
+git log --oneline --graph --decorate

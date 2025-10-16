@@ -1,0 +1,58 @@
+# 1. Create and initialize a new repo
+git init rebase-demo
+cd rebase-demo
+
+# 2. Create initial commit on main
+echo "Initial version" > app.txt
+git add app.txt
+git commit -m "Initial commit"
+
+# 3. Create a new branch for development
+git checkout -b feature
+
+# 4. Make multiple small commits
+echo "Line 1" >> app.txt
+git add app.txt
+git commit -m "Added line 1"
+
+echo "Line 2" >> app.txt
+git add app.txt
+git commit -m "Added line 2"
+
+echo "Line 3" >> app.txt
+git add app.txt
+git commit -m "Added line 3"
+
+# 5. View commit history
+git log --oneline
+
+# 6. Start interactive rebase to clean up commits
+git rebase -i HEAD~3
+
+# 7. In the interactive screen:
+# Change the first commit from "pick" to "pick"
+# Change next commits from "pick" to "s" (squash) or "f" (fixup)
+# Example:
+# pick a1b2c3 Added line 1
+# s d4e5f6 Added line 2
+# s g7h8i9 Added line 3
+
+# 8. Save and close editor (combine commits)
+# If prompted, edit the new commit message and save
+
+# 9. Verify cleaned-up history
+git log --oneline
+
+# 10. Switch to main and update it before merge
+git checkout main
+git pull origin main   # if remote exists
+
+# 11. Rebase feature branch onto main to keep linear history
+git checkout feature
+git rebase main
+
+# 12. Push rebased branch to remote (force needed)
+git push origin feature --force
+
+# 13. Verify final log
+git log --oneline --graph --decorate
