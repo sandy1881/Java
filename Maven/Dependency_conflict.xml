@@ -1,0 +1,137 @@
+Scenario
+Lets say we have a multi-module Maven project like this:
+
+my-enterprise-project/
+│
+├── pom.xml             ← Parent POM
+├── service/            ← Business logic
+│   └── pom.xml
+└── web/                ← REST API layer
+    └── pom.xml
+
+Now during the Jenkins or local build, you get an error like:
+Dependency convergence error:
+Found two versions of jackson-databind: 2.13.0 and 2.15.2
+This means:
+service module depends on jackson-databind:2.13.0
+web module depends on spring-boot-starter-web → which transitively brings jackson-databind:2.15.2
+
+Step 1: Identify the Conflict
+Run the Maven Dependency Tree:
+Go inside the parent directory and run:
+mvn dependency:tree -Dverbose
+You’ll see something like:
+
+[INFO] --- service module dependencies ---
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:2.13.0
+[INFO]
+[INFO] --- web module dependencies ---
+[INFO] +- org.springframework.boot:spring-boot-starter-web:3.3.0
+[INFO] |  \- com.fasterxml.jackson.core:jackson-databind:2.15.2
+
+
+Now you’ve confirmed two different versions of the same dependency.
+
+Step 2: Choose the Correct Version
+Usually, you should choose the newer, stable version (for example, 2.15.2) — because older versions might have security or compatibility issues.
+
+Step 3: Resolve It in the Parent POM
+The best solution is to enforce one consistent version using <dependencyManagement> in your parent pom.xml.
+
+Example Fix — Parent pom.xml
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>my-enterprise-project</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>service</module>
+    <module>web</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.15.2</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>
+This ensures all modules that use jackson-databind will now automatically pick version 2.15.2.
+
+Step 4: Clean and Rebuild
+Now run the build again from the root:
+mvn clean install
+
+This rebuilds all modules with the consistent version.
+If everything is configured correctly, the build will succeed.
+
+Step 5: (Optional) Exclude Old Version
+If the service module explicitly adds the older version (2.13.0), remove it or exclude it like this:
+<dependency>
+  <groupId>my.company</groupId>
+  <artifactId>service-module</artifactId>
+  <version>1.0.0</version>
+  <exclusions>
+    <exclusion>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+
+Step 6: Validate with Enforcer Plugin (Optional but Recommended)
+Add the Maven Enforcer Plugin to your parent POM to detect future version mismatches automatically.
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-enforcer-plugin</artifactId>
+      <version>3.3.0</version>
+      <executions>
+        <execution>
+          <id>enforce-dependencies</id>
+          <goals>
+            <goal>enforce</goal>
+          </goals>
+          <configuration>
+            <rules>
+              <DependencyConvergence/>
+            </rules>
+            <fail>true</fail>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+This will make the build fail early if similar dependency conflicts appear again.
+
+Step 7: Verify Build Order
+Make sure the parent <modules> section lists your modules in the correct dependency order, for example:
+
+<modules>
+  <module>service</module>
+  <module>web</module>
+</modules>
+So that service builds first and then web (which depends on service).
+
+| Step | Action                     | Command/Code              | Result                     |
+| ---- | -------------------------- | ------------------------- | -------------------------- |
+| 1    | Find conflicting libraries | `mvn dependency:tree`     | Shows duplicate versions   |
+| 2    | Choose correct version     | Pick newer/stable version | Avoid compatibility issues |
+| 3    | Enforce version in parent  | `<dependencyManagement>`  | Applies to all modules     |
+| 4    | Clean & rebuild            | `mvn clean install`       | Ensures fresh build        |
+| 5    | (Optional) Exclude old     | `<exclusions>`            | Removes unwanted version   |
+| 6    | Prevent future conflicts   | Enforcer plugin           | Auto-detects mismatches    |
+| 7    | Maintain build order       | `<modules>` order         | Ensures sequential builds  |
+
+“If two modules in a multi-module Maven project have a dependency conflict, 
+I would first use mvn dependency:tree to identify which libraries and versions are clashing. 
+Then, I’d resolve it by declaring a consistent version of the conflicting dependency inside the parent POM’s <dependencyManagement> section, 
+ensuring all child modules use the same version. Finally, I’d clean and rebuild the project (mvn clean install) to verify a successful build. 
+Optionally, I’d add the Maven Enforcer plugin to automatically detect similar issues in the future.”

@@ -1,0 +1,145 @@
+<!-- Project builds successfully on your local machine,
+but fails in Jenkins with errors like:
+
+java.lang.NoClassDefFoundError
+Could not resolve dependency version conflict
+Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin
+
+ -->
+
+
+ 1. Identify the Conflict
+Step 1: Check the Error in Jenkins Logs
+Look at the Jenkins console output.
+Usually, it tells you which dependency or version is causing the issue, e.g.:
+
+Dependency convergence error: 
+Found two versions of commons-io:commons-io:2.6 and 2.11.0
+This means different dependencies require different versions of the same library.
+
+Step 2: Reproduce the Build on Your Local
+Run the same command Jenkins uses:
+mvn clean install -U
+This forces Maven to update dependencies.
+If it fails locally too now, you know the issue is dependency versioning (Jenkins uses a cleaner cache).
+
+Step 3: Analyze Dependencies
+Run this command:
+mvn dependency:tree
+It shows a hierarchical tree of dependencies — including transitive ones.
+
+Example output:
+
+[INFO] +- org.springframework.boot:spring-boot-starter-web:3.3.0
+[INFO] |  \- commons-io:commons-io:2.11.0
+[INFO] \- my-custom-lib:1.0.0
+[INFO]    \- commons-io:commons-io:2.6
+
+You can see here: two versions of commons-io are being pulled.
+
+Step 4: Compare Jenkins Environment
+Sometimes Jenkins:
+Uses a different Maven version
+Has a different JDK version
+Caches dependencies under a different .m2 repository
+Uses corporate Nexus/Artifactory repository with overridden versions
+Check Jenkins “Global Tool Configuration” for:
+Maven version
+JDK path
+Repository settings (settings.xml)
+
+2. Resolve the Conflict
+Option 1: Enforce a Version in pom.xml
+
+If multiple versions appear, use dependencyManagement to define a single version:
+
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+This ensures all modules use the same version.
+
+Option 2: Exclude the Conflicting Transitive Dependency
+If one dependency brings an unwanted version, exclude it:
+
+<dependency>
+  <groupId>my-custom-lib</groupId>
+  <artifactId>custom-lib</artifactId>
+  <version>1.0.0</version>
+  <exclusions>
+    <exclusion>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </exclusion>
+  </exclusions>
+</dependency>
+
+Option 3: Clean Jenkins Cache
+Sometimes Jenkins caches older or corrupted jars.
+Go to Jenkins workspace and clean Maven’s local repo:
+rm -rf ~/.m2/repository
+Then rebuild:
+mvn clean install
+
+Option 4: Align Maven Versions
+Ensure your local Maven version and Jenkins Maven version are same:
+mvn -v
+If they differ, align them (ideally use Maven wrapper in project):
+./mvnw clean install
+
+Option 5: Use Dependency Convergence Check
+Use Maven Enforcer Plugin to detect conflicts automatically:
+
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-enforcer-plugin</artifactId>
+      <version>3.3.0</version>
+      <executions>
+        <execution>
+          <id>enforce</id>
+          <goals>
+            <goal>enforce</goal>
+          </goals>
+          <configuration>
+            <rules>
+              <DependencyConvergence/>
+            </rules>
+            <fail>true</fail>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
+This will fail the build early if there’s a version conflict.
+
+3. Summary Table
+Step	Action	Purpose
+1	Check Jenkins logs	Identify which dependency failed
+2	Run mvn dependency:tree	Find duplicate versions
+3	Use <dependencyManagement>	Force same version
+4	Exclude unwanted transitive dependencies	Prevent duplication
+5	Align Maven/JDK versions	Avoid environment mismatch
+6	Use Enforcer plugin	Prevent future conflicts
+
+Final Example Fix
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
+
+Then rebuild both locally and in Jenkins:
+mvn clean install

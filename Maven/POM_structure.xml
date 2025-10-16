@@ -1,0 +1,189 @@
+1. Problem Understanding
+In real-world applications (like microservices or layered architectures), you often have:
+Many modules (e.g., api, service, repository, web, etc.)
+Common dependencies (like logging, testing, database drivers)
+Different build orders (e.g., build repository before service)
+If all modules manage their dependencies separately, you’ll have:
+Duplicate dependency versions
+Inconsistent builds
+Hard-to-track dependency conflicts
+So, we use a multi-module Maven project structure with parent-child POMs to manage everything efficiently.
+
+2. Ideal POM Structure Overview
+project-root/
+│
+├── pom.xml  ← Parent (manages all versions, plugins, build order)
+│
+├── common/              ← Shared code or utilities
+│   └── pom.xml
+│
+├── repository/          ← Database layer
+│   └── pom.xml
+│
+├── service/             ← Business logic
+│   └── pom.xml
+│
+└── web/                 ← REST API or UI
+    └── pom.xml
+
+3. Parent POM (Root pom.xml)
+The parent POM manages:
+Common dependency versions
+Build plugins
+Dependency management
+Module ordering
+
+Example: project-root/pom.xml
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>my-enterprise-project</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>  <!-- Parent POM -->
+
+  <modules>
+    <module>common</module>
+    <module>repository</module>
+    <module>service</module>
+    <module>web</module>
+  </modules>
+
+  <!-- Centralized version control -->
+  <properties>
+    <java.version>17</java.version>
+    <spring.boot.version>3.3.0</spring.boot.version>
+    <junit.version>5.9.3</junit.version>
+  </properties>
+
+  <!-- Common dependency versions -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring.boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-api</artifactId>
+        <version>${junit.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <!-- Common plugins -->
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.11.0</version>
+          <configuration>
+            <source>${java.version}</source>
+            <target>${java.version}</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+</project>
+Purpose:
+Keeps all dependency versions in one place.
+Defines module build order.
+Ensures every module uses the same Java and plugin versions.
+
+4. Child POMs (Module pom.xml)
+Each module inherits from the parent, so it doesn’t need to repeat dependencies or plugin configs.
+
+Example: service/pom.xml
+<project>
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>my-enterprise-project</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>service</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>repository</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+  </dependencies>
+</project>
+
+Example: web/pom.xml
+<project>
+  <parent>
+    <groupId>com.example</groupId>
+    <artifactId>my-enterprise-project</artifactId>
+    <version>1.0.0</version>
+  </parent>
+
+  <artifactId>web</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.example</groupId>
+      <artifactId>service</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+  </dependencies>
+</project>
+
+5. Build Order Control
+Maven builds modules in the order they appear in the parent <modules> section.
+Example:
+
+<modules>
+  <module>common</module>
+  <module>repository</module>
+  <module>service</module>
+  <module>web</module>
+</modules>
+
+
+So:
+common builds first
+repository builds next (depends on common)
+service builds next (depends on repository)
+web builds last
+You can then build the entire project with:
+mvn clean install
+
+6. Best Practices Summary
+Area	Best Practice	Benefit
+Version Control	Use <dependencyManagement> in parent	Avoid version conflicts
+Code Reuse	Have common module for shared utilities	No duplication
+Build Order	Define <modules> explicitly in parent	Ensures correct dependency build order
+Consistency	Centralize plugin versions in <pluginManagement>	Same behavior across modules
+Scalability	Add new modules easily	Clean expansion
+Clarity	Keep each module focused on one layer	Easier maintenance
+
+7. Summary Answer (Interview-Ready)
+“To manage dependencies and build order efficiently, I would design a multi-module Maven structure with a parent POM acting as a central dependency manager.
+The parent POM would use <dependencyManagement> for version control, <pluginManagement> for consistent plugin configurations, and <modules> to define build order.
+Each module would inherit from the parent and only declare module-specific dependencies.
+This ensures version consistency, eliminates duplication, simplifies builds, and guarantees the correct build sequence.”

@@ -1,0 +1,110 @@
+Maven is a build automation and project management tool used mainly for Java projects.
+It helps developers build, package, test, and manage dependencies in an efficient and standardized way.
+
+Think of Maven as:
+A tool that automates the process of compiling code, running tests, creating JAR/WAR files, and managing libraries your project needs.
+
+Why do we need Maven?
+Without Maven, you would have to:
+Manually download and add jar files (libraries).
+Set up the classpath yourself.
+Handle version conflicts between libraries.
+Write custom build scripts.
+
+With Maven:
+You just declare dependencies in one file (pom.xml), and it downloads them automatically.
+It follows a standard project structure, so everything is organized.
+It can run builds with a single command (mvn clean install).
+
+Key Features of Maven
+Dependency Management – Automatically downloads required JARs from the internet.
+Build Lifecycle – Provides predefined build phases (compile, test, package, install, deploy).
+Project Structure – Standardized directory layout for easy collaboration.
+Plugins – Extend Maven’s functionality (e.g., compiler plugin, surefire plugin for testing).
+Integration – Works well with Jenkins, GitHub, Eclipse, IntelliJ, etc.
+
+Maven Directory Structure
+MyProject/
+│
+├── src/
+│   ├── main/
+│   │   └── java/        (your source code)
+│   │   └── resources/   (config files, XMLs)
+│   └── test/
+│       └── java/        (unit tests)
+│
+├── target/              (output: compiled classes, jars)
+│
+└── pom.xml              (Project Object Model file)
+
+What is pom.xml?
+pom.xml (Project Object Model) is the heart of a Maven project.
+It defines:
+Project information
+Dependencies
+Build configuration
+Plugins
+Repositories
+
+
+Example: pom.xml
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example</groupId>
+  <artifactId>demo-app</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <!-- Spring Boot dependency -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>3.3.0</version>
+    </dependency>
+
+    <!-- JUnit for testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.9.3</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+</project>
+
+
+Common maven commands
+| Command       | Description                                     |
+| ------------- | ----------------------------------------------- |
+| `mvn clean`   | Deletes the `target` folder (cleans old builds) |
+| `mvn compile` | Compiles the source code                        |
+| `mvn test`    | Runs test cases                                 |
+| `mvn package` | Packages the code into a `.jar` or `.war` file  |
+| `mvn install` | Installs the package into your local repository |
+| `mvn deploy`  | Deploys to remote repository (for sharing)      |
+
+
+Build Lifecycle (Phases)
+Maven’s lifecycle is made up of phases, executed in order:
+validate – Check if the project is correct.
+compile – Compile source code.
+test – Run unit tests.
+package – Create jar/war.
+verify – Verify package meets criteria.
+install – Copy to local repository.
+deploy – Copy to remote repository.
+
+Advantages of Maven
+Simplifies dependency management.
+Consistent project structure.
+Easy to integrate with CI/CD pipelines.
+Reduces manual build effort.
+Works well in teams and large projects.
