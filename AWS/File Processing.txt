@@ -1,0 +1,94 @@
+Step 1: File Upload and Storage
+Service Used: Amazon S3
+
+All files are uploaded to an S3 bucket.
+S3 provides highly scalable and durable storage.
+It can trigger events automatically whenever a file is uploaded.
+
+Optimization Techniques
+Use multipart upload for large files to improve upload speed and reliability.
+Enable versioning to keep track of changes and backups.
+Use S3 lifecycle policies to move processed files to cheaper storage (for example, from S3 Standard to S3 Glacier).
+Apply S3 event notifications to trigger the next step automatically when a new file arrives.
+
+Step 2: Event-Driven Processing
+Service Used: AWS Lambda
+When a file is uploaded to S3, an S3 event notification triggers a Lambda function.
+The Lambda function performs processing such as
+Image resizing
+Data validation or format conversion
+Extracting metadata
+Sending notifications
+Optimization Techniques
+Use Lambda layers to reuse common code libraries.
+Optimize Lambda memory and timeout configuration for the workload.
+Split heavy processing tasks into smaller functions for better parallel execution.
+Use Step Functions to coordinate multiple Lambda functions in sequence or parallel.
+
+Step 3: Handling Large or Complex Processing
+Service Used: AWS Step Functions or Amazon SQS with EC2 / ECS
+If processing is too heavy for a single Lambda function (for example, large video processing or machine learning tasks), you can
+Push file details into an SQS (Simple Queue Service) queue.
+Use EC2 instances or ECS containers to consume messages from the queue and perform processing asynchronously.
+
+Optimization Techniques
+Use auto scaling in EC2 or ECS to handle workload spikes automatically.
+Enable dead-letter queues in SQS to capture failed messages.
+Batch process multiple files for better performance and cost efficiency.
+
+Step 4: Storage of Processed Files
+Service Used: Amazon S3 (separate bucket or folder)
+Store processed files in another S3 bucket such as processed-bucket.
+Use S3 lifecycle rules to move older processed files to Glacier for cost savings.
+Use S3 cross-region replication for disaster recovery or global availability.
+
+Step 5: Metadata and Tracking
+Service Used: Amazon DynamoDB or Amazon RDS
+Store metadata such as file name, upload time, status, and output location in a database.
+DynamoDB provides fast and scalable NoSQL storage suitable for such metadata.
+
+Optimization Techniques
+Use DynamoDB Streams to trigger additional actions when data changes.
+Use Global Secondary Indexes for faster queries.
+
+Step 6: Notification and Monitoring
+Services Used: Amazon SNS, CloudWatch, CloudTrail
+SNS sends notifications to users or administrators when processing completes or fails.
+CloudWatch monitors the performance of Lambda, EC2, and other services.
+CloudTrail logs all API activity for auditing and debugging.
+
+Optimization Techniques
+Set up CloudWatch alarms to detect processing delays or errors.
+Use metrics to fine-tune Lambda concurrency and EC2 scaling policies.
+
+Step 7: Security and Access Management
+Service Used: AWS IAM
+Create IAM roles and policies to control access to S3, Lambda, and other services.
+Use least privilege principle to give only necessary permissions.
+Enable server-side encryption in S3 for data security.
+Use AWS KMS to manage encryption keys.
+
+Optimized Workflow Summary
+Step	                              AWS Service	                                     Purpose
+1	                                     S3	                                     File upload and storage
+2	                                    Lambda	                                Event-driven file processing
+3	                                SQS / EC2 / ECS                         	Handle large or batch processing
+4	                                       S3	                                 Store processed output
+5	                                   DynamoDB	                                Store metadata or file status
+6	                                  SNS / CloudWatch	                         Notifications and monitoring
+7	                                   IAM / KMS	                               Security and access control
+
+Benefits of This Optimized Design
+Scalability: Automatically handles large volumes of files.
+Serverless: Uses managed services to reduce maintenance.
+Cost Efficiency: Pay only for actual usage.
+Reliability: Durable storage and fault-tolerant design.
+Security: Fine-grained access control and encryption.
+
+Example Flow
+User uploads a file to S3.
+S3 triggers a Lambda function through an event.
+Lambda reads the file, processes it, and stores the output in another S3 bucket.
+Lambda writes file metadata to DynamoDB.
+SNS sends a success or failure notification.
+CloudWatch monitors the entire workflow.

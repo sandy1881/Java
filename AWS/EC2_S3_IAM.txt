@@ -1,0 +1,102 @@
+1. Amazon EC2 (Elastic Compute Cloud)
+Definition
+Amazon EC2 provides virtual servers called instances that can be used to run applications. 
+It gives you resizable compute capacity in the cloud, meaning you can easily increase or decrease the number of servers based on your needs.
+
+Key Features
+You can choose different instance types based on CPU, memory, storage, and network performance.
+You can launch, stop, restart, or terminate instances anytime.
+Provides multiple operating systems like Windows, Linux, Ubuntu, and Red Hat.
+Supports Auto Scaling to handle changes in workload automatically.
+Offers Elastic Load Balancing to distribute traffic across multiple instances.
+
+Use Cases
+Hosting websites and applications.
+Running batch processing jobs.
+Hosting backend servers for mobile or web applications.
+Setting up test and development environments.
+
+Example Scenario
+Suppose you want to host a web application. 
+You can launch an EC2 instance, install a web server like Apache or Nginx, deploy your app, and access it through the internet.
+
+2. Amazon S3 (Simple Storage Service)
+Definition
+Amazon S3 is an object storage service that lets you store and retrieve any amount of data at any time. 
+Data in S3 is stored as objects inside buckets.
+
+Key Features
+High durability with 99.999999999 percent (11 nines) data reliability.
+Scalable: can store unlimited data.
+Access control and encryption for data protection.
+Supports versioning to maintain multiple versions of the same object.
+Lifecycle policies to automatically move data between storage classes (for cost optimization).
+
+Use Cases
+Backup and restore of files.
+Storing static website content like images, videos, and HTML files.
+Data archiving and big data analytics.
+Hosting static websites directly from S3.
+
+Example Scenario
+A company can store product images, logs, or reports in S3 buckets and allow their applications to retrieve or update them when needed.
+
+3. AWS Lambda
+Definition
+AWS Lambda is a serverless compute service that lets you run code without managing servers. 
+You just upload your code, and Lambda automatically handles the rest such as scaling, patching, and server management.
+
+Key Features
+Executes code in response to events (for example, uploading a file to S3, receiving an API request, or inserting a record in DynamoDB).
+You only pay for the time your code runs, measured in milliseconds.
+Automatically scales based on the number of incoming requests.
+Supports many programming languages such as Python, Node.js, Java, C Sharp, and Go.
+
+Use Cases
+Processing uploaded images or files in S3.
+Building serverless APIs using AWS API Gateway.
+Automating backend tasks like sending notifications or cleaning logs.
+Real-time data processing and analytics.
+
+Example Scenario
+When a user uploads a photo to an S3 bucket, a Lambda function can automatically resize the image and store it in another bucket — all without any server setup.
+
+4. AWS IAM (Identity and Access Management)
+Definition
+AWS IAM helps you securely manage access to AWS services and resources.
+It controls who can access what resources and what actions they can perform.
+
+Key Features
+You can create users, groups, and roles.
+Policies define specific permissions for each user or group.
+Supports Multi-Factor Authentication (MFA) for additional security.
+Integrates with other AWS services for secure access management.
+Follows the principle of least privilege (give only the required permissions).
+
+Key Components
+Users: Individual accounts that can access AWS resources.
+Groups: Collections of users with shared permissions.
+Roles: Temporary permissions that can be assigned to users or services.
+Policies: Documents in JSON format that define access rules.
+
+Use Cases
+Grant access to developers, administrators, or applications.
+Manage permissions for EC2 instances or Lambda functions.
+Secure cross-account access in large organizations.
+
+Example Scenario
+You can create a user called "developer1" with permission to access S3 buckets but not EC2 instances.
+You can also assign an IAM role to a Lambda function to allow it to read data from DynamoDB.
+
+Summary
+Service	                                 Purpose	                                Type
+EC2              	Provides virtual servers for running applications	       Compute (IaaS)
+S3	                    Stores and retrieves data as objects	                    Storage
+Lambda	              Runs code automatically without managing servers      Compute (Serverless)
+IAM	                   Manages users, roles, and permissions securely           	Security
+
+In simple terms
+EC2 gives you control over virtual machines.
+S3 stores your data safely.
+Lambda runs your code automatically without a server.
+IAM controls who can do what inside AWS.
